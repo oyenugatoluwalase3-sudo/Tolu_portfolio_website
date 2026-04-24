@@ -11,7 +11,6 @@ I build solutions using a mix of analytical and development tools:
 
 * **Languages:** Python (Pandas, Plotly), SQL (Server, CTEs, Window Functions)
 * **Visualization:** Power BI (DAX, KPI Design), Excel
-* **Web Development:** React, Vite, Supabase (I enjoy building full-stack solutions to deploy my analytical insights)
 
 ---
 
