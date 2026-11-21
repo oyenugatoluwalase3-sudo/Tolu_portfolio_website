@@ -1,0 +1,205 @@
+/* ================================================================
+   PATCH — assets/css/patch.css
+   Loaded AFTER styles.css, so it overrides where needed.
+   styles.css is untouched. Later you can paste this file's
+   contents at the bottom of styles.css and delete this file.
+   ================================================================ */
+
+/* ── FIX 1: [hidden] must always hide (author display rules like
+        .btn { display:inline-flex } were beating the attribute) ── */
+[hidden] { display: none !important; }
+
+/* ── FIX 2: sticky profile photo. overflow-x:hidden on <body> turns
+        it into a scroll container and silently kills position:sticky.
+        `clip` stops sideways scroll without that side effect. ──── */
+body { overflow-x: clip; }
+
+/* ── FIX 3: hero background image was showing at 100% opacity.
+        The fadeIn animation ended on opacity:1 (fill-mode forwards)
+        and overrode the intended 0.45 / 0.2 values. ───────────── */
+:root                { --hero-bg-opacity: 0.45; }
+[data-theme="light"] { --hero-bg-opacity: 0.2; }
+
+@keyframes bgImageIn {
+  from { opacity: 0; }
+  to   { opacity: var(--hero-bg-opacity); }
+}
+
+.hero__bg-image {
+  opacity: var(--hero-bg-opacity);
+  animation: bgImageIn 1.5s ease both;
+}
+
+@media (max-width: 700px) {
+  :root                { --hero-bg-opacity: 0.18; }
+  [data-theme="light"] { --hero-bg-opacity: 0.14; }
+}
+
+/* ── FIX 4: project cards never lifted on hover. A `forwards`
+        animation keeps transform:translateY(0) forever and beats
+        :hover. `backwards` only applies during the entrance. ──── */
+.project-card.is-visible {
+  opacity: 1;
+  animation: cardFadeUp 0.6s var(--ease-out) backwards;
+}
+
+/* Slightly smaller card titles so long names wrap to 2 lines */
+.card__title { font-size: clamp(1.4rem, 2.1vw, 1.65rem); }
+
+/* ── NEW: placeholder for challenge-day cards ─────────────────── */
+.placeholder-big {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(2.4rem, 5vw, 3.2rem);
+  line-height: 1;
+  color: var(--gold);
+  text-shadow: 0 0 40px var(--gold-glow);
+}
+
+/* ── NEW: challenge progress ──────────────────────────────────── */
+.challenge-progress {
+  margin-top: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  max-width: 460px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--gold-glass);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.challenge-progress__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.challenge-progress__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.challenge-progress__count {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.challenge-progress__bar {
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--border);
+  overflow: hidden;
+}
+
+.challenge-progress__bar span {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-bright));
+  transition: width 1.1s var(--ease-out);
+}
+
+.challenge-progress__link {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  width: fit-content;
+  transition: color var(--t-fast);
+}
+
+.challenge-progress__link:hover { color: var(--gold-bright); }
+
+/* ── NEW: filter chips + show more ────────────────────────────── */
+.projects-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.filter-chip {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: color var(--t-base), border-color var(--t-base), background var(--t-base);
+}
+
+.filter-chip__count {
+  margin-left: 0.55em;
+  opacity: 0.55;
+}
+
+.filter-chip:hover {
+  color: var(--gold-bright);
+  border-color: var(--border-hover);
+}
+
+.filter-chip.is-active {
+  color: var(--gold);
+  background: var(--gold-glass);
+  border-color: var(--gold);
+}
+
+.projects-more {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-8);
+}
+
+.projects-empty {
+  grid-column: 1 / -1;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+/* ── NEW: contact success message (was inline-styled in JS) ───── */
+.contact__success {
+  padding: 1.5rem 2rem;
+  background: var(--gold-glass);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  text-align: center;
+}
+
+/* ── Reduced motion (re-assert, since the rules above are more
+      specific than the ones in styles.css) ──────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .hero__bg-image {
+    animation: none;
+    opacity: var(--hero-bg-opacity);
+  }
+
+  .project-card,
+  .project-card.is-visible {
+    animation: none;
+    opacity: 1;
+  }
+
+  .challenge-progress__bar span { transition: none; }
+}
